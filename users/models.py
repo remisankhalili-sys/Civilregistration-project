@@ -54,3 +54,19 @@ class UserProfile(models.Model):
             ).count()
             
             return today_searches < self.daily_limit
+        
+        def check_monthly_limit(self):
+            """Checks if the monthly limit has been reached."""
+            if timezone.now() - self.last_reset_monthly > timedelta(days=30):
+                self.monthly_limit = 300 # Default value
+                self.last_reset_monthly = timezone.now()
+                self.save()
+
+            # Calculate this month's searches
+            month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            month_searches = SearchLog.objects.filter(
+                user=self.user,
+                timestamp__gte=month_start
+            ).count()
+
+            return month_searches < self.monthly_limit
