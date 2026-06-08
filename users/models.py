@@ -17,4 +17,12 @@ class UserProfile(models.Model):
     phone_number = models.CharField(max_length=15, unique=True, verbose_name="Phone Number")
     birth_date = models.DateField(null=True, blank=True, verbose_name="Date of Birth")
     address = models.TextField(blank=True, null=True, verbose_name="Address")
-    
+
+      # Consumption Settings (Default Limits)
+    # These values can be changed by the admin
+    daily_limit = models.IntegerField(default=10, help_text="Daily search limit", verbose_name="Daily Limit")
+    monthly_limit = models.IntegerField(default=300, help_text="Monthly search limit", verbose_name="Monthly Limit")
+
+    # Consumption Tracking Dates
+    last_reset_daily = models.DateTimeField(default=timezone.now, help_text="Last daily reset time", verbose_name="Last Daily Reset")
+    last_reset_monthly = models.DateTimeField(default=timezone.now, help_text="Last monthly reset time", verbose_name="Last Monthly Reset")
