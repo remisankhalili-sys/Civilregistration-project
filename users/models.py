@@ -26,3 +26,10 @@ class UserProfile(models.Model):
     # Consumption Tracking Dates
     last_reset_daily = models.DateTimeField(default=timezone.now, help_text="Last daily reset time", verbose_name="Last Daily Reset")
     last_reset_monthly = models.DateTimeField(default=timezone.now, help_text="Last monthly reset time", verbose_name="Last Monthly Reset")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
