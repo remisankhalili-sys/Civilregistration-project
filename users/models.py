@@ -70,3 +70,11 @@ class UserProfile(models.Model):
             ).count()
 
             return month_searches < self.monthly_limit
+        
+        def get_daily_usage(self):
+            """Returns the number of searches performed today."""
+            today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            return SearchLog.objects.filter(
+                user=self.user, 
+                timestamp__gte=today_start
+            ).count()
