@@ -40,3 +40,9 @@ class UserRegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Passwords do not match.")
         
         return cleaned_data
+
+class UserProfileForm(forms.ModelForm):
+    """Form for user to edit profile (optional for later steps)."""
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
