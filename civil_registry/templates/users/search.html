@@ -1,0 +1,39 @@
+{% extends 'users/base.html' %}
+{% block title %}Search{% endblock %}
+{% block content %}
+    <h2>Search Civil Registry</h2>
+    <form method="GET" action="{% url 'users:search' %}">
+        <input type="text" name="q" value="{{ query }}" placeholder="Enter National Code, Name, or Phone..." style="width: 70%; padding: 8px;">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if query %}
+        <h3>Results</h3>
+        <p>Found {{ results.count }} results in <strong>{{ duration }} seconds</strong>.</p>
+        
+        {% if results %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>National Code</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in results %}
+                    <tr>
+                        <td>{{ item.first_name }} {{ item.last_name }}</td>
+                        <td>{{ item.national_code }}</td>
+                        <td>{{ item.phone_number }}</td>
+                        <td>{{ item.address }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No results found.</p>
+        {% endif %}
+    {% endif %}
+{% endblock %}
