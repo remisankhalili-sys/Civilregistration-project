@@ -103,4 +103,14 @@ class SearchLog(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"{self.user.username} searched: {self.query_text[:30]}..."           
+        return f"{self.user.username} searched: {self.query_text[:30]}..." 
+
+class AdminConsumptionLimit(models.Model):
+    """
+    This model stores custom consumption limits set by the admin for specific users.
+    If a record exists for a user, these values take precedence over default limits.
+    """
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_limits')
+    custom_daily_limit = models.IntegerField(default=0, help_text="0 means use profile default", verbose_name="Custom Daily Limit")
+    custom_monthly_limit = models.IntegerField(default=0, help_text="0 means use profile default", verbose_name="Custom Monthly Limit")
+    updated_at = models.DateTimeField(auto_now=True)          
