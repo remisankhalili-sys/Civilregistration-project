@@ -78,3 +78,11 @@ class UserProfile(models.Model):
                 user=self.user, 
                 timestamp__gte=today_start
             ).count()
+        
+        def get_monthly_usage(self):
+            """Returns the number of searches performed this month."""
+            month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            return SearchLog.objects.filter(
+                user=self.user,
+                timestamp__gte=month_start
+            ).count()
