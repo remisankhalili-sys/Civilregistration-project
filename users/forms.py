@@ -7,8 +7,13 @@ class UserRegistrationForm(forms.ModelForm):
     """
     New user registration form with phone number validation.
     """
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
+    # Profile and password fields.
+    national_code = forms.CharField(max_length=10, required=True, label="National Code")
+    phone_number = forms.CharField(max_length=15, required=True, label="Phone Number")
+    birth_date = forms.DateField(required=False, label="Date of Birth", widget=forms.DateInput(attrs={'type': 'date'}))
+    address = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 3}))
+    password = forms.CharField(widget=forms.PasswordInput, label="Password")
+    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
 
     class Meta:
         model = User
