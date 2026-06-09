@@ -113,4 +113,21 @@ class AdminConsumptionLimit(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_limits')
     custom_daily_limit = models.IntegerField(default=0, help_text="0 means use profile default", verbose_name="Custom Daily Limit")
     custom_monthly_limit = models.IntegerField(default=0, help_text="0 means use profile default", verbose_name="Custom Monthly Limit")
-    updated_at = models.DateTimeField(auto_now=True)          
+    updated_at = models.DateTimeField(auto_now=True) 
+
+    class Meta:
+        verbose_name = "Admin Consumption Limit"
+        verbose_name_plural = "Admin Consumption Limits"
+
+    def __str__(self):
+        return f"Limits for {self.user.username}"
+
+    def get_effective_daily_limit(self):
+        if self.custom_daily_limit > 0:
+            return self.custom_daily_limit
+        return self.user.profile.daily_limit
+
+    def get_effective_monthly_limit(self):
+        if self.custom_monthly_limit > 0:
+            return self.custom_monthly_limit
+        return self.user.profile.monthly_limit         
