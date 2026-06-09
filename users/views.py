@@ -1,14 +1,16 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView
 from django.contrib import messages
+from django.db.models import Q
 from django.views.generic import CreateView, TemplateView, ListView
 from django.urls import reverse_lazy
 from django.utils import timezone
 from datetime import timedelta
 import time
-from django.db.models import Q
+
 # Import local models and forms
 from .forms import UserRegistrationForm
 from .models import UserProfile, SearchLog, AdminConsumptionLimit
