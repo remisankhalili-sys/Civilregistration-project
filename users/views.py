@@ -88,3 +88,14 @@ class LoginView(TemplateView):
             # Authentication failed
             messages.error(request, 'Invalid username or password.')
             # Render the template again with the context (including error messages)
+            return self.render_to_response(self.get_context_data()) 
+
+# 3. Logout View
+class CustomLogoutView(LogoutView):
+    """
+    Handles user logout.
+    Redirects to the login page after logout.
+    """
+    next_page = reverse_lazy('users:login')
+
+
