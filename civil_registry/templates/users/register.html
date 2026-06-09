@@ -1,0 +1,19 @@
+{% extends 'users/base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+    <h2>Register New Account</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <p><label>Username:</label> {{ form.username }}</p>
+        <p><label>First Name:</label> {{ form.first_name }}</p>
+        <p><label>Last Name:</label> {{ form.last_name }}</p>
+        <p><label>Email:</label> {{ form.email }}</p>
+        <p><label>National Code:</label> {{ form.national_code }}</p>
+        <p><label>Phone Number (+98...):</label> {{ form.phone_number }}</p>
+        <p><label>Date of Birth:</label> {{ form.birth_date }}</p>
+        <p><label>Address:</label> {{ form.address }}</p>
+        <p><label>Password:</label> {{ form.password }}</p>
+        <p><label>Confirm Password:</label> {{ form.confirm_password }}</p>
+        <button type="submit">Register</button>
+    </form>
+{% endblock %}
