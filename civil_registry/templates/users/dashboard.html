@@ -1,0 +1,26 @@
+{% extends 'users/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h2>Welcome, {{ user.first_name }}!</h2>
+    <p><strong>National Code:</strong> {{ profile.national_code }}</p>
+    <p><strong>Phone:</strong> {{ profile.phone_number }}</p>
+    
+    <hr>
+    <h3>Consumption Status</h3>
+    <p><strong>Daily Usage:</strong> {{ daily_used }} / {{ daily_limit }}</p>
+    {% if is_daily_limited %}
+        <p style="color: green;">Daily limit: OK</p>
+    {% else %}
+        <p style="color: red;">Daily limit: EXCEEDED</p>
+    {% endif %}
+
+    <p><strong>Monthly Usage:</strong> {{ monthly_used }} / {{ monthly_limit }}</p>
+    {% if is_monthly_limited %}
+        <p style="color: green;">Monthly limit: OK</p>
+    {% else %}
+        <p style="color: red;">Monthly limit: EXCEEDED</p>
+    {% endif %}
+    
+    <br>
+    <a href="{% url 'users:search' %}">Go to Search Page</a>
+{% endblock %}
