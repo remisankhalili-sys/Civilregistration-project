@@ -34,58 +34,58 @@ class UserProfile(models.Model):
         verbose_name = "User Profile"
         verbose_name_plural = "User Profiles"
 
-        def __str__(self):
-            return f"{self.first_name} {self.last_name} - {self.national_code}"
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.national_code}"
 
-        def check_daily_limit(self):
-            """Checks if the daily limit has been reached."""
-            # If more than 24 hours have passed since last reset, reset daily consumption
-            if timezone.now() - self.last_reset_daily > timedelta(days=1):
-                self.daily_limit = 10 # Default value if admin hasn't changed it
-                self.last_reset_daily = timezone.now()
-                self.save()
+    def check_daily_limit(self):
+        """Checks if the daily limit has been reached."""
+        # If more than 24 hours have passed since last reset, reset daily consumption
+        if timezone.now() - self.last_reset_daily > timedelta(days=1):
+            self.daily_limit = 10 # Default value if admin hasn't changed it
+            self.last_reset_daily = timezone.now()
+            self.save()
 
 
             # Calculate today's searches
-            today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            today_searches = SearchLog.objects.filter(
-                user=self.user, 
-                timestamp__gte=today_start
-            ).count()
+        today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_searches = SearchLog.objects.filter(
+            user=self.user, 
+            timestamp__gte=today_start
+        ).count()
             
-            return today_searches < self.daily_limit
+        return today_searches < self.daily_limit
         
-        def check_monthly_limit(self):
-            """Checks if the monthly limit has been reached."""
-            if timezone.now() - self.last_reset_monthly > timedelta(days=30):
-                self.monthly_limit = 300 # Default value
-                self.last_reset_monthly = timezone.now()
-                self.save()
+    def check_monthly_limit(self):
+        """Checks if the monthly limit has been reached."""
+        if timezone.now() - self.last_reset_monthly > timedelta(days=30):
+            self.monthly_limit = 300 # Default value
+            self.last_reset_monthly = timezone.now()
+            self.save()
 
             # Calculate this month's searches
-            month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            month_searches = SearchLog.objects.filter(
-                user=self.user,
-                timestamp__gte=month_start
-            ).count()
+        month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        month_searches = SearchLog.objects.filter(
+            user=self.user,
+            timestamp__gte=month_start
+        ).count()
 
-            return month_searches < self.monthly_limit
+        return month_searches < self.monthly_limit
         
-        def get_daily_usage(self):
-            """Returns the number of searches performed today."""
-            today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
-            return SearchLog.objects.filter(
-                user=self.user, 
-                timestamp__gte=today_start
-            ).count()
+    def get_daily_usage(self):
+        """Returns the number of searches performed today."""
+        today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        return SearchLog.objects.filter(
+            user=self.user, 
+            timestamp__gte=today_start
+        ).count()
         
-        def get_monthly_usage(self):
-            """Returns the number of searches performed this month."""
-            month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-            return SearchLog.objects.filter(
-                user=self.user,
-                timestamp__gte=month_start
-            ).count()
+    def get_monthly_usage(self):
+        """Returns the number of searches performed this month."""
+        month_start = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        return SearchLog.objects.filter(
+            user=self.user,
+            timestamp__gte=month_start
+        ).count()
         
 class SearchLog(models.Model):
     """
