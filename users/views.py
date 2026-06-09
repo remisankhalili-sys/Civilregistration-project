@@ -98,4 +98,50 @@ class CustomLogoutView(LogoutView):
     """
     next_page = reverse_lazy('users:login')
 
+# 4. User Dashboard View
+class UserDashboardView(LoginRequiredMixin, TemplateView):
+    """
+    Displays the user dashboard.
+    Requires the user to be logged in.
+    Shows usage statistics and limits.
+    """
+    template_name = 'users/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # Get the current user's profile
+        user_profile = self.request.user.profile
+        
+        # Check usage limits
+        is_daily_limited = not user_profile.check_daily_limit()
+        is_monthly_limited = not user_profile.check_monthly_limit()
+        
+        # Get current usage amounts
+        daily_used = user_profile.get_daily_usage()
+        monthly_used = user_profile.get_monthly_usage()
+        
+        # Determine effective limits (from AdminConsumptionLimit if available, else default)
+        try:
+            admin_limits = AdminConsumptionLimit.objects.get(user=self.request.user)
+            daily_limit = admin_limits.get_effective_daily_limit()
+            monthly_limit = admin_limits.get_effective_monthly_limit()
+        except AdminConsumptionLimit.DoesNotExist:
+            # Fallback to default limits defined in the profile model
+            daily_limit = user_profile.daily_limit
+            monthly_limit = user_profile.monthly_limit
+
+        # Update context dictionary with all necessary data
+        context.update({
+            'user': self.request.user,
+            'profile': user_profile,
+            'is_daily_limited': is_daily_limited,
+            'is_monthly_limited': is_monthly_limited,
+            'daily_used': daily_used,
+            'daily_limit': daily_limit,
+            'monthly_used': monthly_used,
+            'monthly_limit': monthly_limit,
+        })
+        
+        return context
 
