@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from datetime import timedelta
 import time
+from django.db.models import Q
 # Import local models and forms
 from .forms import UserRegistrationForm
 from .models import UserProfile, SearchLog, AdminConsumptionLimit
@@ -142,6 +143,80 @@ class UserDashboardView(LoginRequiredMixin, TemplateView):
             'monthly_used': monthly_used,
             'monthly_limit': monthly_limit,
         })
+        
+        return context
+    
+# 5. Search View
+class SearchView(LoginRequiredMixin, ListView):
+    """
+    Handles search functionality.
+    Requires login. Implements pagination and search logging.
+    """
+    template_name = 'users/search.html'
+    context_object_name = 'results'
+    paginate_by = 10
+
+    def get_queryset(self):
+        """
+        Define the queryset for the list view.
+        Checks limits before performing the search.
+        """
+        query = self.request.GET.get('q', '')
+        user_profile = self.request.user.profile
+
+        # --- Check Limits Before Searching ---
+        if not user_profile.check_daily_limit():
+            messages.error(self.request, "You have reached your daily search limit.")
+            return UserProfile.objects.none()
+        
+        if not user_profile.check_monthly_limit():
+            messages.error(self.request, "You have reached your monthly search limit.")
+            return UserProfile.objects.none()
+
+        # --- Perform Search ---
+        if query:
+            start_time = time.time()
+            
+            # Filter users based on multiple fields
+            results = UserProfile.objects.filter(
+                Q(first_name__icontains=query) |
+                Q(last_name__icontains=query) |
+                Q(national_code__icontains=query) |
+                Q(phone_number__icontains=query) |
+                Q(address__icontains=query)
+            )
+            
+            end_time = time.time()
+            duration = round(end_time - start_time, 4)
+
+            # Log the search activity
+            SearchLog.objects.create(
+                user=self.request.user,
+                query_text=query,
+                results_count=results.count(),
+                duration=duration
+            )
+
+            messages.success(self.request, f"Found {results.count()} results in {duration} seconds.")
+            
+            # Store temporary data in session for the template
+            self.request.session['search_duration'] = duration
+            self.request.session['search_query'] = query
+            
+            return results
+        else:
+            # If no query, return empty queryset
+            return UserProfile.objects.none()
+
+    def get_context_data(self, **kwargs):
+        """
+        Add search-specific data to the context.
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Retrieve data from session
+        context['duration'] = self.request.session.get('search_duration', 0)
+        context['query'] = self.request.session.get('search_query', '')
         
         return context
 
