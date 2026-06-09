@@ -19,16 +19,6 @@ class UserRegistrationForm(forms.ModelForm):
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Add profile fields to the form.
-        self.national_code = forms.CharField(max_length=10, required=True, label="National Code")
-        self.phone_number = forms.CharField(max_length=15, required=True, label="Phone Number")
-        self.birth_date = forms.DateField(required=False, label="Date of Birth", widget=forms.DateInput(attrs={'type': 'date'}))
-        self.address = forms.CharField(required=False, widget=forms.Textarea)
-        self.password = forms.CharField(widget=forms.PasswordInput)
-        self.confirm_password = forms.CharField(widget=forms.PasswordInput)
-
     def clean_phone_number(self):
         phone = self.cleaned_data.get('phone_number')
         # Check the number format: it must start with +98 and be numbers.
