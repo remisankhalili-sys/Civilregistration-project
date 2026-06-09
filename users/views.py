@@ -48,3 +48,43 @@ class RegisterView(CreateView):
          # Return the standard response for a valid form
         return super().form_valid(form)
 
+# 2. Login View
+class LoginView(TemplateView):
+    """
+    Handles user login.
+    Uses TemplateView to render the login page and handle POST requests.
+    """
+    template_name = 'users/login.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Add context data to the template.
+        If the user is already logged in, redirect them to the dashboard.
+        """
+        context = super().get_context_data(**kwargs)
+        
+        # Redirect authenticated users to dashboard to prevent duplicate logins
+        if self.request.user.is_authenticated:
+            return redirect('users:dashboard')
+            
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handle POST request for login credentials.
+        """
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # Log the user in
+            login(request, user)
+            messages.success(request, f'Welcome back, {user.first_name}!')
+            return redirect('users:dashboard')
+        else:
+            # Authentication failed
+            messages.error(request, 'Invalid username or password.')
+            # Render the template again with the context (including error messages)
