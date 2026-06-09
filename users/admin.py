@@ -13,4 +13,20 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff')
     search_fields = ('username', 'email', 'profile__national_code', 'profile__phone_number')
 
+    # Registering a profile model in the admin (for hidden access).
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'national_code', 'phone_number', 'daily_limit', 'monthly_limit', 'get_daily_usage', 'get_monthly_usage')
+    list_filter = ('daily_limit', 'monthly_limit')
+    search_fields = ('user__username', 'national_code', 'phone_number')
+    
+    def get_daily_usage(self, obj):
+        return obj.get_daily_usage()
+    get_daily_usage.short_description = "Daily Usage"
+
+    def get_monthly_usage(self, obj):
+        return obj.get_monthly_usage()
+    get_monthly_usage.short_description = "Monthly Usage"
+
+
 
