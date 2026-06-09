@@ -35,6 +35,16 @@ class SearchLogAdmin(admin.ModelAdmin):
     search_fields = ('query_text', 'user__username')
     readonly_fields = ('user', 'query_text', 'results_count', 'duration', 'timestamp')
 
+@admin.register(AdminConsumptionLimit)
+class AdminConsumptionLimitAdmin(admin.ModelAdmin):
+    list_display = ('user', 'custom_daily_limit', 'custom_monthly_limit', 'updated_at')
+    search_fields = ('user__username', 'user__profile__national_code')
+    list_filter = ('custom_daily_limit', 'custom_monthly_limit')
+
+# User re-registration with custom settings.
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
+
 
 
 
