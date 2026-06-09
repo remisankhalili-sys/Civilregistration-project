@@ -28,5 +28,13 @@ class UserProfileAdmin(admin.ModelAdmin):
         return obj.get_monthly_usage()
     get_monthly_usage.short_description = "Monthly Usage"
 
+@admin.register(SearchLog)
+class SearchLogAdmin(admin.ModelAdmin):
+    list_display = ('user', 'query_text', 'results_count', 'duration', 'timestamp')
+    list_filter = ('timestamp', 'user')
+    search_fields = ('query_text', 'user__username')
+    readonly_fields = ('user', 'query_text', 'results_count', 'duration', 'timestamp')
+
+
 
 
