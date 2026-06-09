@@ -95,4 +95,12 @@ class SearchLog(models.Model):
     query_text = models.CharField(max_length=500, verbose_name="Search Query")
     results_count = models.IntegerField(default=0, verbose_name="Results Count")
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name="Search Time")
-    duration = models.FloatField(default=0, help_text="Search duration in seconds", verbose_name="Duration (sec)")        
+    duration = models.FloatField(default=0, help_text="Search duration in seconds", verbose_name="Duration (sec)") 
+
+    class Meta:
+        verbose_name = "Search Log"
+        verbose_name_plural = "Search Logs"
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"{self.user.username} searched: {self.query_text[:30]}..."           
