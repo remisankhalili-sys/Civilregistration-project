@@ -63,4 +63,12 @@ def populate_users(count=100000):
         except Exception as e:
             print(f"Error creating user {i}: {e}")
             continue
-        
+        # Show progress every 1000 records.
+        if created_users % 1000 == 0:
+            print(f"Created {created_users} users and {created_profiles} profiles so far...")
+
+    print(f"Population complete! Total users: {created_users}, Total profiles: {created_profiles}")
+
+if __name__ == '__main__':
+    # generate 100 thousand records.
+    populate_users(100000)
