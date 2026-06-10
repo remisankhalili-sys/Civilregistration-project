@@ -49,3 +49,18 @@ def populate_users(count=100000):
                 password=password
             )
             created_users += 1
+
+            # Create a civil registration profile .
+            UserProfile.objects.create(
+                user=user,
+                national_code=generate_national_code(),
+                phone_number=generate_phone_number(),
+                birth_date=date(1980 + random.randint(0, 40), random.randint(1, 12), random.randint(1, 28)),
+                address=f"Address {i}, City {random.randint(1, 100)}"
+            )
+            created_profiles += 1
+
+        except Exception as e:
+            print(f"Error creating user {i}: {e}")
+            continue
+        
